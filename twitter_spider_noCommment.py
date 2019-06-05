@@ -20,7 +20,7 @@ def monToDays(mon,year):
         elif oneMon <= 7:
             monCount += 30 if oneMon%2 == 0 else 31
         else:
-            monCOunt += 31 if oneMon%2 ==0 else 30
+            monCount += 31 if oneMon%2 ==0 else 30
     return monCount
                 
 

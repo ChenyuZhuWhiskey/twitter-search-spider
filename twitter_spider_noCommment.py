@@ -12,7 +12,7 @@ def yearTodDays(year):
         dayCount += 366 if year%4==0 else 365
     return dayCount
 
-def monToDays(mon,year):
+def countMonthToDays(mon,year):
     monCount = 0
     for oneMon in range(1, mon+1):
         if oneMon == 2:
@@ -32,7 +32,7 @@ def searchTimeSplit(time_start, time_end):
         startTimeArr[i] = int(startTimeArr[i])
         endTimeArr[i] = int(endTimeArr[i])
 
-    dayCount = (yearTodDays(endTimeArr[0]) + monToDays(endTimeArr[1],endTimeArr[0]) + endTimeArr[2]) - (yearTodDays(startTimeArr[0]) + monToDays(startTimeArr[1],endTimeArr[0]) + startTimeArr[2])
+    dayCount = (yearTodDays(endTimeArr[0]) + countMonthToDays(endTimeArr[1],endTimeArr[0]) + endTimeArr[2]) - (yearTodDays(startTimeArr[0]) + monToDays(startTimeArr[1],endTimeArr[0]) + startTimeArr[2])
     print('search days span: ' ,dayCount)
     date_startTime = datetime.date(startTimeArr[0],startTimeArr[1],startTimeArr[2])
     timeSpan = [str(date_startTime)]
@@ -43,6 +43,10 @@ def searchTimeSplit(time_start, time_end):
         timeSpan.append(str(date_afterPlus))
     return timeSpan
 
+def monthStrtoNum(monStr):
+    month_strDict = {'Jan':'01','Feb':'02','Mar':'03','Apr':'30','May':'31','Jun':'30','Jul':'31','Aug':'31','Sep':'30','Oct':'31','Nov':'30','Dec':'31'}
+    return month_strDict.get(monStr)
+
 def tweetTime_process(tweetTime):
     hour = tweetTime.split()[0].split(':')[0]
     minute = tweetTime.split()[0].split(':')[1]
@@ -51,32 +55,9 @@ def tweetTime_process(tweetTime):
     if not isAM:
         hour = str(int(hour)+12)
     mon_str = tweetTime.split()[4]
-    if mon_str == 'Jan':
-        mon = '01'
-    elif mon_str == 'Feb':
-        mon = '02'
-    elif mon_str == 'Mar':
-        mon = '03'
-    elif mon_str == 'Apr':
-        mon = '04'
-    elif mon_str == 'May':
-        mon = '05'
-    elif mon_str == 'Jun':
-        mon = '06'
-    elif mon_str == 'Jul':
-        mon = '07'
-    elif mon_str == 'Aug':
-        mon = '08'
-    elif mon_str == 'Sep':
-        mon = '09'
-    elif mon_str == 'Oct':
-        mon = '10'
-    elif mon_str == 'Nov':
-        mon = '11'
-    else:
-        mon = '12'
+    mon_num = monthStrtoNum(mon_str)
     year = tweetTime.split()[5]
-    time_processed = year + '-' + mon + '-' + day + '-' + hour + '-' + minute
+    time_processed = year + '-' + mon_num + '-' + day + '-' + hour + '-' + minute
     return time_processed
 
 def getTwitterSearchUrl(keywords, time_start, time_end):
@@ -192,8 +173,8 @@ if __name__ == '__main__':
 
     '''covered search area'''
     keywords = ['bitcoin', 'BTC']
-    time_start = '2019-01-01'
-    time_end = '2019-05-19'
+    time_start = '2019-06-02'
+    time_end = '2019-06-03'
 
     fileName = 'data_twitter_noComments_from{}_to{}'.format(time_start,time_end)
 
@@ -209,7 +190,7 @@ if __name__ == '__main__':
     browser.set_page_load_timeout(30)
     #browserForGetReply.set_page_load_timeout(30)
 
-    tweetData_all = [[],[],[],[],[],[],[],[],[],[]]
+    tweetData_all = [[],[],[],[],[],[],[],[]]
     tweetData_count_all = 0
     timeSearchSpan = searchTimeSplit(time_start,time_end)
     for i in range(len(timeSearchSpan) - 1):
@@ -223,4 +204,3 @@ if __name__ == '__main__':
     print('----all tweets data has been collected successfully!----')
     print('total: ', tweetData_count_all)
     fp.close()
-
